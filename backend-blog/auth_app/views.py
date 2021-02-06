@@ -32,7 +32,6 @@ class SignupView(APIView):
 
         else:
             user = User.objects.create_user(username=username,password = password)
-            user.save()
             return Response({
                 'success': 'Account created sucessfully'
             })
@@ -52,11 +51,17 @@ class LoginView(APIView):
 
             if user is not None:
                 auth.login(request, user)
-                return Response({ 'success': 'User authenticated' })
+                return Response({ 
+                    'success': 'User authenticated' 
+                })
             else:
-                return Response({ 'error': 'Error Authenticating' })
+                return Response({ 
+                    'error': 'Error Authenticating' 
+                })
         except:
-            return Response({ 'error': 'Something went wrong when logging in' })
+            return Response({ 
+                'error': 'Something went wrong when logging in' 
+            })
 
 
 class LogoutView(APIView):
@@ -71,13 +76,19 @@ class CheckAuthenticatedView(APIView):
         user = self.request.user
         isAuthenticated = user.is_authenticated
         if isAuthenticated:
-            return Response({ 'isAuthenticated': 'success' })
+            return Response({ 
+                'isAuthenticated': 'success','username':user.username 
+            })
         else:
-            return Response({ 'isAuthenticated': 'error' })
+            return Response({ 
+                'isAuthenticated': 'error' 
+            })
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class GetCSRFToken(APIView):
     permission_classes = (permissions.AllowAny, )
 
     def get(self, request):
-        return Response({ 'success': 'CSRF cookie set' })
+        return Response({ 
+            'success': 'CSRF cookie set' 
+        })

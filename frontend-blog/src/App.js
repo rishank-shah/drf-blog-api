@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {BrowserRouter,Route} from 'react-router-dom'
+import Layout from './components/Layout'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import {Provider} from 'react-redux'
+import store from './store'
+import ListBlog from './pages/Blog/ListBlog'
+import ReadBlog from './pages/Blog/ReadBlog'
+import CreateBlog from './pages/Blog/CreateBlog'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () =>(
+    <Provider store = {store} >
+        <BrowserRouter>
+            <Layout>
+                <Route exact path='/' component={Home} ></Route>
+                <Route exact path='/register' component={Register} ></Route>
+                <Route exact path='/login' component={Login} ></Route>
+                <Route exact path='/dashboard' component={Dashboard} ></Route>
+                <Route exact path='/blogs/list' component={ListBlog} ></Route>
+                <Route exact path='/blogs/create' component={CreateBlog} ></Route>
+                <Route exact path='/blog/read/:slug' component={ReadBlog} ></Route>
+            </Layout>
+        </BrowserRouter>
+    </Provider>
+)
+
 
 export default App;

@@ -21,13 +21,14 @@ class BlogDetailView(RetrieveAPIView):
             if comments_count > 0:
                 comments = BlogComment.objects.filter(main_blog = post).values()
                 serialized_data = BlogCommentSerializer(comments,many=True)
+                ser = serialized_data.data
             else:
-                comments = {}
+                ser = {}
             serializer = BlogDetailSerializer(post)
             return Response({
                 'blog': serializer.data,
                 'comments_count': comments_count,
-                'comments':serialized_data.data
+                'comments':ser
             })
         else:
             return Response({
@@ -39,16 +40,22 @@ def create(request):
     serializer = BlogCreateSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(uploaded_by=request.user)
-    return Response({'success':'Blog Created Successfully'})
+    return Response({
+        'success':'Blog Created Successfully'
+    })
 
 @api_view(['DELETE'])
 def delete_blog(request,slug):
     user = User.objects.get(username = request.user.username)
     if Blog.objects.filter(uploaded_by = user,slug__iexact=slug).exists():
         Blog.objects.get(uploaded_by = user,slug__iexact=slug).delete()
-        return Response({'success':'Deleted Blog Successfully'})
+        return Response({
+            'success':'Deleted Blog Successfully'
+        })
     else:
-        return Response({'error':'You cannot delete this blog'})
+        return Response({
+            'error':'You cannot delete this blog'
+        })
 
 @api_view(['POST'])
 def create_comment(request):
@@ -59,19 +66,6 @@ def create_comment(request):
     serializer = BlogCommentCreateSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(main_blog=blog,author=request.user)
-    return Response({'success':'Comment Created Successfully'})
-
-{
-"content":"cbhhchsjc",
-"small_description":"small_description",
-"title":"title"
-}
-{
-"username":"username",
-"password": "password",
-"password2": "password"
-}
-{
-"slug": "title-2",
-"content":"jscjcbshdhchsdhcsdbcjsdbjcbhjsdhbj"
-}
+    return Response({
+        'success':'Comment Created Successfully'
+    })
