@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'blog',
-    'auth_app'
+    'auth_app',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

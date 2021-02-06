@@ -5,11 +5,18 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 @method_decorator(csrf_protect, name='dispatch')
 class SignupView(APIView):
     permission_classes = (permissions.AllowAny, )
     
+    username_config =  openapi.Parameter('username', openapi.IN_QUERY, description="username for user", type=openapi.TYPE_STRING)
+    password_config = openapi.Parameter('password', openapi.IN_QUERY, description="password", type=openapi.TYPE_STRING)
+    password2_config = openapi.Parameter('password2', openapi.IN_QUERY, description="reenter password", type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[username_config,password_config,password2_config])
     def post(self,request):
         username = request.data['username']
         password = request.data['password']
@@ -40,6 +47,9 @@ class SignupView(APIView):
 class LoginView(APIView):
     permission_classes = (permissions.AllowAny, )
 
+    username_config =  openapi.Parameter('username', openapi.IN_QUERY, description="username for user", type=openapi.TYPE_STRING)
+    password_config = openapi.Parameter('password', openapi.IN_QUERY, description="password", type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[username_config,password_config])
     def post(self, request, format=None):
         data = self.request.data
 
@@ -48,7 +58,6 @@ class LoginView(APIView):
 
         try:
             user = auth.authenticate(username=username, password=password)
-
             if user is not None:
                 auth.login(request, user)
                 return Response({ 

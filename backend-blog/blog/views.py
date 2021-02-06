@@ -4,6 +4,8 @@ from blog.models import Blog,BlogComment
 from blog.serializers import BlogDetailSerializer,BlogListSerializer,BlogCreateSerializer,BlogCommentSerializer,BlogCommentCreateSerializer
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class BlogListView(ListAPIView):
     queryset = Blog.objects.order_by('-date_created')
@@ -35,6 +37,10 @@ class BlogDetailView(RetrieveAPIView):
                 "error":"Not Found"
             })
 
+content_config =  openapi.Parameter('content', openapi.IN_QUERY, description="content for blog", type=openapi.TYPE_STRING)
+title_config = openapi.Parameter('title', openapi.IN_QUERY, description="title for blog", type=openapi.TYPE_STRING)
+small_description_config = openapi.Parameter('small_description', openapi.IN_QUERY, description="small description for blog", type=openapi.TYPE_STRING)
+@swagger_auto_schema(method='post', manual_parameters=[title_config,small_description_config,content_config])
 @api_view(['POST'])
 def create(request):
     serializer = BlogCreateSerializer(data=request.data)
@@ -57,6 +63,8 @@ def delete_blog(request,slug):
             'error':'You cannot delete this blog'
         })
 
+comment_content_config =  openapi.Parameter('content', openapi.IN_QUERY, description="content for comment", type=openapi.TYPE_STRING)
+@swagger_auto_schema(method='post',manual_parameters=[comment_content_config])
 @api_view(['POST'])
 def create_comment(request):
     user = User.objects.get(username = request.user.username)
